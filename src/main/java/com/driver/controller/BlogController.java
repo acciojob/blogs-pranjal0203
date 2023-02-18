@@ -1,5 +1,6 @@
 package com.driver.controller;
 
+import com.driver.DTOs.BlogResponseDto;
 import com.driver.models.Blog;
 import com.driver.services.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +13,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/blogs")
 public class BlogController {
+    @Autowired
+    BlogService blogService;
 
     @PostMapping
-    public ResponseEntity createBlog(@RequestParam Integer userId ,
+    public ResponseEntity<BlogResponseDto> createBlog(@RequestParam int userId ,
                                      @RequestParam String title,
                                      @RequestParam String content) {
         // Create a blog and add it under given user
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        BlogResponseDto blogResponseDto = blogService.createAndReturnBlog(userId, title, content);
+        return new ResponseEntity<>(blogResponseDto, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{blogId}")
     public ResponseEntity<Void> deleteBlog(@PathVariable int blogId) {
         // Delete the blog using deleteById
+        blogService.deleteBlog(blogId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
